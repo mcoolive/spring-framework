@@ -285,11 +285,9 @@ public abstract class BodyExtractors {
 
 	private static Mono<Void> consumeAndCancel(ReactiveHttpInputMessage message) {
 		return message.getBody()
-				.map(buffer -> {
+				.doOnNext(buffer -> {
 					DataBufferUtils.release(buffer);
-					throw new ReadCancellationException();
 				})
-				.onErrorResume(ReadCancellationException.class, ex -> Mono.empty())
 				.then();
 	}
 
